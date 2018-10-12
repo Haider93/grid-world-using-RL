@@ -1,0 +1,1 @@
+Reinforcement learning agent that uses Q learning algorithm to learn moving through a maze
