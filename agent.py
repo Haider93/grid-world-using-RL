@@ -102,32 +102,6 @@ class Agent:
     # key = dictionary.keys()[-1]
     # return key
 
-    def modifyActionVector(self, state):
-        for i in range(0, len(self.action_vector)):
-            if self.action_vector[i] == 1.0 and i < len(self.action_vector)-2:
-                if state == '|G|':
-                    self.action_vector[i] = 0.0
-                    i+=1
-                    self.action_vector[i] = 0.0
-                    i+=1
-                    self.action_vector[i] = 1.0
-                    break;
-                elif state == '|_|':
-                    self.action_vector[i] = 0.0
-                    i += 1
-                    self.action_vector[i] = 1.0
-                    i += 1
-                    self.action_vector[i] = 0.0
-                    break;
-                elif state == '|-|':
-                    self.action_vector[i] = 1.0
-                    i += 1
-                    self.action_vector[i] = 0.0
-                    i += 1
-                    self.action_vector[i] = 0.0
-                    break;
-
-
     def future_discounted_reward(self, agent_pos):
         x = agent_pos[0]
         y = agent_pos[1]
@@ -202,21 +176,15 @@ class Agent:
 array1 = [['|S|', '|_|', '|_|'], ['|_|', '|-|', '|_|'], ['|_|', '|_|', '|G|']]
 # print("Length of enviroment array ",len(array1))
 env1 = Environment(array1, 3)
-# env1.printGrid()
-
 q_matrix = np.zeros([((len(array1) * len(array1))), 4], dtype=float)
 agent = Agent(len(array1), q_matrix, [0, 0])
 # agent.pick_action()
-
 n_train_episodes = 0
 n_eval_episodes = 0
 reward = 0
-
 feature_vector_dimen = 12  # actions * features
 action_vector_dimen = 4  # left, right, up, down
-
 feature_vector = np.zeros(feature_vector_dimen, dtype=float)
-
 while n_train_episodes < 1000:
     while True:
         rl_agent = Agent(len(array1), agent.q_matrix, [0, 0], feature_vector.transpose())
@@ -229,4 +197,3 @@ while n_train_episodes < 1000:
             agent.printQMatrix()
             break
     n_train_episodes += 1
-
