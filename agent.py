@@ -35,13 +35,6 @@ class Agent:
     def QValue(self, a, x, y):
         return self.q_matrix[(self.dimen * x) + y][a]
 
-    def update_Q_Matrix(self, a, value):
-        '''general formula for finding equivalent index value for 2d array cell position'''
-        '''index(one-d-array) = dimension of two-d-array * i + j'''
-        '''two-d-array is square matrix'''
-        '''row value and column value starts with 0 and ends with two-d-array-dimension - 1'''
-        self.q_matrix[(self.dimen * self.agent_prev_position[0]) + self.agent_prev_position[1]][a] += value
-
     def update_Q_Matrix_xy(self, a, value, x=0, y=0):
         # Q Update function
         # if a not in self.actions_allowed:
@@ -216,126 +209,30 @@ class Agent:
                 self.agent_position[0] = x
                 self.agent_position[1] = y
 
-
-
-
-    def find_from_state(self, action, xx, yy):
-        if action == 0:
-            yy += 1
-        elif action == 1:
-            yy -= 1
-        elif action == 2:
-            xx += 1
-        elif action == 3:
-            xx -= 1
-        if xx > self.dimen - 1:
-            xx -= 1
-        elif yy > self.dimen -1:
-            yy -= 1
-        elif xx < 0:
-            xx += 1
-        elif yy < 0:
-            yy += 1
-        return xx,yy
-    # def executeAction(self):
-    #     '''Execute actions available according epsilon greedy policy'''
-    #     '''update q table after executing each action'''
-    #     '''balance between exploration and exploitation'''
-    #     '''if exploiting use next highest q value generating action out of allowed actions'''
-    #     '''if exploring use random action out of actions allowed'''
-    #     currentX = self.agent_position[0]
-    #     currentY = self.agent_position[1]
-    #     self.agent_prev_position = self.agent_position
-    #     self.actions_allowed = Agent.pick_action(self)
-    #     if randint(0, 1) < self.epsilon:  # exploiting
-    #         act = self.MaxQValueGeneratingAction()
-    #     else:  # exploring
-    #         act = self.actions_allowed[randint(0, len(self.actions_allowed) - 1)]
-    #
-    #     if act == 0:
-    #         currentY -= 1
-    #         print("Agent has now taken left action")
-    #         self.action_vector = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    #     elif act == 1:
-    #         currentY += 1
-    #         print("Agent has now taken right action")
-    #         self.action_vector = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    #     elif act == 2:
-    #         currentX -= 1
-    #         print("Agent has now taken up action")
-    #         self.action_vector = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
-    #     elif act == 3:
-    #         currentX += 1
-    #         print("Agent has now taken down action")
-    #         self.action_vector = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0]
-    #
-    #     if mem.isStateVisited(currentX, currentY) == True and self.agent_position != self.agent_prev_position:
-    #         print("Agent revisited", self.agent_position)
-    #         return self.reward
-    #
-    #     if currentX == 0 and currentY == 2:
-    #         x = 0
-    #
-    #     if env1.getGridXYVal(currentX, currentY) == '|G|':
-    #         '''end of episode'''
-    #         self.reward += 10
-    #         '''here input code for estimating total future reward could be obtained from this new state using bellman eq'''
-    #         # self.update_Q_Matrix(act, self.reward)
-    #         mem.setStateVisited(currentY, currentY)
-    #         self.update_Q_Matrix_xy(act, self.reward, self.agent_position[0], self.agent_position[1])
-    #         self.modifyActionVector('|G|')
-    #         self.weight_vector = np.matmul((np.array(self.action_vector) / LA.norm(np.array(self.action_vector))), (
-    #                 self.reward + self.gamma * np.array(np.outer(self.action_vector, self.weight_vector))))
-    #         # FA ends
-    #         self.agent_position[0] = currentX
-    #         self.agent_position[1] = currentY
-    #         print("Agent reached inside terminal state : ", self.agent_position)
-    #         self.episode_state = True
-    #         weight_vector = self.weight_vector
-    #         print("Weight vector is : ", self.weight_vector)
-    #         return self.reward
-    #
-    #     elif env1.getGridXYVal(currentX, currentY) == '|_|':
-    #         self.agent_position[0] = currentX
-    #         self.agent_position[1] = currentY
-    #         mem.setStateVisited(currentY, currentY)
-    #
-    #
-    #         self.reward += 1 + self.gamma * self.executeAction()  # recursion here
-    #         self.update_Q_Matrix_xy(act, self.reward, self.agent_prev_position[0], self.agent_prev_position[1])
-    #
-    #         print("Agent reached inside  : ", self.agent_position)
-    #         # calculate value of product of feature and weight vector
-    #         # FA (function approximation) using bellman equation
-    #         self.modifyActionVector('|_|')
-    #         self.weight_vector = np.matmul((np.array(self.action_vector) / LA.norm(np.array(self.action_vector))), (
-    #                 self.reward + self.gamma * np.array(np.outer(self.action_vector, self.weight_vector))))
-    #     # FA ends
-    #     # return (self.gamma * self.reward)
-    #
-    #     elif env1.getGridXYVal(currentX, currentY) == '|-|':
-    #         '''Need episode termination to make the agent learn not to bump wall'''
-    #         print("Agent recently bumped to the wall")
-    #
-    #         self.reward += -1 + self.gamma * self.executeAction()  # recursion here
-    #         self.update_Q_Matrix_xy(act, self.reward)
-    #
-    #         # calculate value of product of feature and weight vector
-    #         # FA (function approximation) using bellman equation
-    #         self.modifyActionVector('|-|')
-    #         self.weight_vector = np.matmul((np.array(self.action_vector) / LA.norm(np.array(self.action_vector))), (
-    #                 self.reward + self.gamma * np.array(np.outer(self.action_vector, self.weight_vector))))
-    #     # FA ends
-    #     # self.reward -= 100
-    #     # return (self.gamma * self.reward)
-    #     return (self.gamma * self.reward)
-
+#     def find_from_state(self, action, xx, yy):
+#         if action == 0:
+#             yy += 1
+#         elif action == 1:
+#             yy -= 1
+#         elif action == 2:
+#             xx += 1
+#         elif action == 3:
+#             xx -= 1
+#         if xx > self.dimen - 1:
+#             xx -= 1
+#         elif yy > self.dimen -1:
+#             yy -= 1
+#         elif xx < 0:
+#             xx += 1
+#         elif yy < 0:
+#             yy += 1
+#         return xx,yy
+   
 
 ##test
 array1 = [['|S|', '|_|', '|_|'], ['|_|', '|-|', '|_|'], ['|_|', '|_|', '|G|']]
 # print("Length of enviroment array ",len(array1))
 env1 = Environment(array1, 3)
-# env1.printGrid()
 
 #q_matrix = np.zeros([((len(array1) * len(array1))), 4], dtype=float)
 #agent = Agent(len(array1), q_matrix, [0, 0])
@@ -349,10 +246,6 @@ feature_vector_dimen = 12  # actions * features
 action_vector_dimen = 4  # left, right, up, down
 
 feature_vector = np.zeros(feature_vector_dimen, dtype=float)
-# print("vector ", feature_vector_left)
-# print("vector ", feature_vector_right)
-# print("vector ", feature_vector_up)
-# print("vector ", feature_vector_down)
 
 while n_train_episodes < 1000:
     mem = Memory()
