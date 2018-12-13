@@ -18,13 +18,3 @@ class Environment:
 
 	def getGridXYVal(self, x, y):
 		return self.grid[x][y]
-
-
-array = np.ones(shape=(3,3)).astype('int')
-array1 = [['|S|', '|_|', '|_|'], ['|_|', '|-|', '|_|'], ['|_|', '|_|', '|G|']]
-env1 = Environment(array1, 3)
-if(env1.getGridXYVal(2, 2) == '|G|'):
-	print("This is Final State")
-else:
-	print("This is Final State")
-#env1.printGrid()
